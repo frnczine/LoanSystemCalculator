@@ -36,14 +36,11 @@ public class AdminMainActivity extends AppCompatActivity implements AdminLoanAda
         btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> logout());
 
-        tvAdminEmail = findViewById(R.id.tvAdminEmail);
         recyclerLoans = findViewById(R.id.recyclerLoans);
         spinnerFilter = findViewById(R.id.spinnerFilter);
 
         //ADMIN
         SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
-        String adminEmail = prefs.getString("email", "admin@abc.com");
-        tvAdminEmail.setText("Logged in as: " + adminEmail);
 
         db = new DatabaseHelper(this);
         recyclerLoans.setLayoutManager(new LinearLayoutManager(this));
@@ -63,7 +60,7 @@ public class AdminMainActivity extends AppCompatActivity implements AdminLoanAda
     private void setupFilterSpinner() {
         String[] filterOptions = {"All", "Pending", "Approved", "Rejected"};
         ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, filterOptions);
+                R.layout.spinner_white, filterOptions);
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerFilter.setAdapter(adapterSpinner);
 
