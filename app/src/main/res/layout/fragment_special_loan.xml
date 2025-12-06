@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/arrowback"
+                android:tint="@color/white"
+                android:onClick="onBackClick"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Special Loan"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- Eligibility Status -->
+        <TextView
+            android:id="@+id/tvEligibility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Checking eligibility..."
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Loan Amount Input -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Loan Amount"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginBottom="5dp"/>
+
+        <EditText
+            android:id="@+id/edit_loanAmount"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="₱50,000 - ₱100,000"
+            android:inputType="numberDecimal"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/light_grey"
+            android:enabled="false"/>
+
+        <!-- Loan Term Input -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Loan Term (Months)"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"/>
+
+        <EditText
+            android:id="@+id/edit_loanMonth"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="1-18 months"
+            android:inputType="number"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/light_grey"
+            android:enabled="false"/>
+
+        <!-- Note for eligibility -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Note: Special loans are only available for members with 5+ years of service"
+            android:textColor="@color/light_grey"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/white"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Calculation Results -->
+        <TextView
+            android:id="@+id/tvServiceCharge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Service Charge: ₱0.00"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tvInterest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total Interest: ₱0.00"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tvTakeHomeAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Take Home Amount: ₱0.00"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tvMonthlyPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Monthly Payment: ₱0.00"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="30dp"/>
+
+        <!-- Buttons -->
+        <Button
+            android:id="@+id/btn_Calculate"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_button"
+            android:text="Calculate Loan"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textAllCaps="false"
+            android:layout_marginBottom="15dp"
+            android:enabled="false"/>
+
+        <Button
+            android:id="@+id/btn_Apply"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_button"
+            android:text="Apply for Loan"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textAllCaps="false"
+            android:enabled="false"/>
+    </LinearLayout>
+</ScrollView>

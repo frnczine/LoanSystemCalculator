@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Loan Type and Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/txtLoanType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Emergency Loan"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:padding="4dp"
+                android:paddingHorizontal="8dp"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <!-- Loan Amount -->
+        <TextView
+            android:id="@+id/txtLoanAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount: ₱15,000.00"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Loan Term -->
+        <TextView
+            android:id="@+id/txtLoanTerm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Term: 6 months"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Application Date -->
+        <TextView
+            android:id="@+id/txtApplicationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Applied: 2024-01-15"
+            android:textSize="14sp"
+            android:textColor="@color/grey"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Monthly Payment -->
+        <TextView
+            android:id="@+id/txtMonthlyPayment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Monthly: ₱2,750.00"
+            android:textSize="16sp"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
