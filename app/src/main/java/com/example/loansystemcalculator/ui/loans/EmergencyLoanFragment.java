@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,14 +26,16 @@ import java.util.Date;
 import java.util.Locale;
 
 public class EmergencyLoanFragment extends Fragment {
-
+    private RadioGroup rgPaymentOption;
+    private RadioButton rbCash,rbInstallment;
     private EditText editLoanAmount, editMonths;
-    private TextView tvServiceCharge, tvInterest, tvMonthlyPayment, tvTakeHomeAmount;
+    private TextView tvServiceCharge, tvInterest, tvMonthlyPayment, tvTakeHomeAmount,tvLoanTermLabel,tvTotalAmount;
     private Button btnCalculate, btnApply;
     private DatabaseHelper db;
     private LoanCalculator loanCalculator;
     private String userEmail;
     private int userId;
+    private boolean isCashOption = false;
 
     @Nullable
     @Override
@@ -55,8 +59,34 @@ public class EmergencyLoanFragment extends Fragment {
         tvInterest = view.findViewById(R.id.tvInterest);
         tvMonthlyPayment = view.findViewById(R.id.tvMonthlyPayment);
         tvTakeHomeAmount = view.findViewById(R.id.tvTakeHomeAmount);
+        tvTotalAmount = view.findViewById(R.id.tvTotalAmount);
         btnCalculate = view.findViewById(R.id.btn_Calculate);
         btnApply = view.findViewById(R.id.btn_Apply);
+        rbCash = view.findViewById(R.id.rbCash);
+        rbInstallment = view.findViewById(R.id.rbInstallment);
+
+        btnApply.setEnabled(false);
+
+        rgPaymentOption = view.findViewById(R.id.rgPaymentOption);
+        tvLoanTermLabel = view.findViewById(R.id.tvLoanTermLabel);
+
+        // Initially hide month input if cash is selected
+        editMonths.setVisibility(View.VISIBLE); // default: installment
+        tvLoanTermLabel.setVisibility(View.VISIBLE);
+
+        rgPaymentOption.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.rbCash) {
+                editMonths.setVisibility(View.GONE);
+                tvLoanTermLabel.setVisibility(View.GONE);
+                editMonths.setText("");
+                isCashOption = true;
+            } else {
+                editMonths.setVisibility(View.VISIBLE);
+                tvLoanTermLabel.setVisibility(View.VISIBLE);
+                isCashOption = false;
+            }
+        });
+
 
         loanCalculator = new LoanCalculator();
 
@@ -81,82 +111,135 @@ public class EmergencyLoanFragment extends Fragment {
         btnCalculate.setOnClickListener(v -> calculateLoan());
         btnApply.setOnClickListener(v -> applyForLoan());
     }
+    private boolean isCalculated = false;
 
     private void calculateLoan() {
         try {
             double loanAmount = Double.parseDouble(editLoanAmount.getText().toString().trim());
-            int months = Integer.parseInt(editMonths.getText().toString().trim());
 
-            // Validate emergency loan limits
+            // Validate loan amount
             if (loanAmount < 5000 || loanAmount > 25000) {
                 Toast.makeText(getContext(), "Emergency loan amount must be between ₱5,000 and ₱25,000", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (months < 1 || months > 6) {
-                Toast.makeText(getContext(), "Emergency loan term must be 1-6 months", Toast.LENGTH_SHORT).show();
-                return;
+            boolean isCash = rbCash.isChecked();
+            int months;
+
+            if (isCash) {
+                // CASH AFTER 6 MONTHS
+                months = 6;
+            } else {
+                // INSTALLMENT
+                if (editMonths.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(getContext(), "Please enter number of months", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                months = Integer.parseInt(editMonths.getText().toString().trim());
+
+                if (months < 1 || months > 6) {
+                    Toast.makeText(getContext(), "Installment term must be between 1-6 months", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
-            // Calculate loan details
+            // Fixed emergency interest rate
             double interestRate = 0.006; // 0.60% per month
+
+            // Calculations
             double serviceCharge = loanCalculator.calculateServiceCharge(loanAmount, "emergency");
             double interest = loanCalculator.calculateInterest(loanAmount, interestRate, months);
             double totalAmount = loanAmount + serviceCharge + interest;
-            double monthlyPayment = totalAmount / months;
-            double takeHomeAmount = loanAmount - serviceCharge; // FIXED: This is correct!
 
-            // Update UI with results
+            double monthlyPayment;
+            if (isCash) {
+                monthlyPayment = totalAmount; // PAY EVERYTHING AT ONCE
+            } else {
+                monthlyPayment = totalAmount / months;
+            }
+
+            double takeHomeAmount = loanAmount;
+
+            // Update UI
             tvServiceCharge.setText(String.format("Service Charge: ₱%,.2f", serviceCharge));
             tvInterest.setText(String.format("Total Interest: ₱%,.2f", interest));
-            tvMonthlyPayment.setText(String.format("Monthly Payment: ₱%,.2f", monthlyPayment));
+            tvMonthlyPayment.setText(String.format(isCash ?
+                    "Cash Payment After 6 Months: ₱%,.2f" :
+                    "Monthly Payment: ₱%,.2f", monthlyPayment));
             tvTakeHomeAmount.setText(String.format("Take Home Amount: ₱%,.2f", takeHomeAmount));
+            tvTotalAmount.setText(String.format("TotalAmount: ₱%,.2f", totalAmount));
 
-            // Enable apply button
+
             btnApply.setEnabled(true);
 
-        } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
+            isCalculated = true;
+
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Please enter valid values", Toast.LENGTH_SHORT).show();
         }
     }
 
+
     private void applyForLoan() {
+
+        if (!isCalculated) {
+            Toast.makeText(getContext(), "Please calculate the loan first", Toast.LENGTH_SHORT).show();
+            return;
+        }
         try {
             double loanAmount = Double.parseDouble(editLoanAmount.getText().toString().trim());
-            int months = Integer.parseInt(editMonths.getText().toString().trim());
 
-            // Validate again
+            int months;
+            boolean isCash = rbCash.isChecked();
+
+            // Determine loan term
+            if (isCash) {
+                months = 6; // CASH OPTION ALWAYS 6 MONTHS
+            } else {
+                if (editMonths.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(getContext(), "Please enter number of months", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                months = Integer.parseInt(editMonths.getText().toString().trim());
+
+                if (months < 1 || months > 6) {
+                    Toast.makeText(getContext(), "Installment term must be between 1-6 months", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            // Validate amount
             if (loanAmount < 5000 || loanAmount > 25000) {
                 Toast.makeText(getContext(), "Emergency loan amount must be between ₱5,000 and ₱25,000", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (months < 1 || months > 6) {
-                Toast.makeText(getContext(), "Emergency loan term must be 1-6 months", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Check if user already has pending emergency loan
+            // Prevent duplicate loan
             if (db.hasPendingLoan(userId, "emergency")) {
                 Toast.makeText(getContext(), "You already have a pending emergency loan application", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Get user's basic salary for loan calculations
+            // Get salary (for DB saving)
             double basicSalary = db.getUserBasicSalary(userId);
 
-            // Calculate loan details
-            double interestRate = 0.006; // 0.60%
+            // Computation
+            double interestRate = 0.006;
             double serviceCharge = loanCalculator.calculateServiceCharge(loanAmount, "emergency");
             double interest = loanCalculator.calculateInterest(loanAmount, interestRate, months);
             double totalAmount = loanAmount + serviceCharge + interest;
-            double monthlyPayment = totalAmount / months;
+
+            // FIXED: correct monthly payment handling
+            double monthlyPayment = isCash ? totalAmount : totalAmount / months;
+
             double takeHomeAmount = loanAmount - serviceCharge;
 
-            // Get current date
+            // Date
             String applicationDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-            // Apply for loan
+            // Save to DB
             boolean success = db.applyForLoan(
                     userId,
                     "emergency",
@@ -166,7 +249,7 @@ public class EmergencyLoanFragment extends Fragment {
                     serviceCharge,
                     totalAmount,
                     monthlyPayment,
-                    takeHomeAmount, // This is already correct
+                    takeHomeAmount,
                     basicSalary,
                     applicationDate
             );
@@ -179,7 +262,7 @@ public class EmergencyLoanFragment extends Fragment {
             }
 
         } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Please calculate the loan first", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please calculate the loan first before applying", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -191,6 +274,9 @@ public class EmergencyLoanFragment extends Fragment {
         tvMonthlyPayment.setText("Monthly Payment: ₱0.00");
         tvTakeHomeAmount.setText("Take Home Amount: ₱0.00");
         btnApply.setEnabled(false);
+
+        isCalculated = false;
+
     }
 
     private void goBack() {

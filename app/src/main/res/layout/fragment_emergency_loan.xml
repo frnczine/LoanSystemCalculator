@@ -21,7 +21,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/arrowback"
-            android:tint="@color/white"
+            app:tint="@color/white"
             android:onClick="onBackClick"/>
 
         <TextView
@@ -56,7 +56,43 @@
         android:textColorHint="@color/light_grey"/>
 
     <!-- Loan Term Input -->
+    <!-- Payment Option -->
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Payment Option"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"/>
+
+    <RadioGroup
+        android:id="@+id/rgPaymentOption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbCash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cash after 6 months"
+            android:textColor="@color/white"
+            android:checked="false"
+            android:layout_marginEnd="20dp"/>
+
+        <RadioButton
+            android:id="@+id/rbInstallment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Installment"
+            android:textColor="@color/white"
+            android:checked="true"/>
+    </RadioGroup>
+
+    <!-- Loan Term Input -->
+    <TextView
+        android:id="@+id/tvLoanTermLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Loan Term (Months)"
@@ -111,6 +147,16 @@
         android:textSize="16sp"
         android:textColor="@color/white"
         android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/tvTotalAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total Amount: ₱0.00"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:layout_marginBottom="8dp"/>
+
 
     <TextView
         android:id="@+id/tvMonthlyPayment"

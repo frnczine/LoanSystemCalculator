@@ -27,13 +27,14 @@ import java.util.Locale;
 public class SpecialLoanFragment extends Fragment {
 
     private EditText editLoanAmount, editMonths;
-    private TextView tvServiceCharge, tvInterest, tvMonthlyPayment, tvTakeHomeAmount, tvEligibility;
+    private TextView tvInterest, tvMonthlyPayment, tvTakeHomeAmount, tvEligibility;
     private Button btnCalculate, btnApply;
     private DatabaseHelper db;
     private LoanCalculator loanCalculator;
     private String userEmail;
     private int userId;
     private String dateHired;
+    private boolean isCalculated = false;
 
     @Nullable
     @Override
@@ -54,13 +55,14 @@ public class SpecialLoanFragment extends Fragment {
     private void initializeViews(View view) {
         editLoanAmount = view.findViewById(R.id.edit_loanAmount);
         editMonths = view.findViewById(R.id.edit_loanMonth);
-        tvServiceCharge = view.findViewById(R.id.tvServiceCharge);
         tvInterest = view.findViewById(R.id.tvInterest);
         tvMonthlyPayment = view.findViewById(R.id.tvMonthlyPayment);
         tvTakeHomeAmount = view.findViewById(R.id.tvTakeHomeAmount);
         tvEligibility = view.findViewById(R.id.tvEligibility);
         btnCalculate = view.findViewById(R.id.btn_Calculate);
         btnApply = view.findViewById(R.id.btn_Apply);
+
+        btnApply.setEnabled(false);
 
         loanCalculator = new LoanCalculator();
 
@@ -79,7 +81,15 @@ public class SpecialLoanFragment extends Fragment {
         SharedPreferences prefs = getActivity().getSharedPreferences("user_session", 0);
         userEmail = prefs.getString("email", "");
         userId = db.getUserIdByEmail(userEmail);
-        dateHired = prefs.getString("date_hired", "");
+
+// Get date hired from database
+        DatabaseHelper.User user = db.getUserDetails(userId);
+        if (user != null) {
+            dateHired = user.getDateHired();
+        } else {
+            dateHired = "";
+        }
+
     }
 
     private void checkEligibility() {
@@ -90,19 +100,13 @@ public class SpecialLoanFragment extends Fragment {
             return;
         }
 
-        try {
-            int yearsOfService = calculateYearsOfService(dateHired);
-            if (yearsOfService >= 5) {
-                tvEligibility.setText("Eligibility: Eligible (" + yearsOfService + " years of service)");
-                tvEligibility.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
-                enableForm();
-            } else {
-                tvEligibility.setText("Eligibility: Not eligible - Need 5+ years of service (You have " + yearsOfService + " years)");
-                tvEligibility.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-                disableForm();
-            }
-        } catch (Exception e) {
-            tvEligibility.setText("Eligibility: Error checking eligibility");
+        int yearsOfService = calculateYearsOfService(dateHired);
+        if (yearsOfService >= 5) {
+            tvEligibility.setText("Eligibility: Eligible (" + yearsOfService + " years of service)");
+            tvEligibility.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+            enableForm();
+        } else {
+            tvEligibility.setText("Eligibility: Not eligible - Need 5+ years (You have " + yearsOfService + " years)");
             tvEligibility.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
             disableForm();
         }
@@ -120,14 +124,11 @@ public class SpecialLoanFragment extends Fragment {
             currentCal.setTime(currentDate);
 
             int years = currentCal.get(Calendar.YEAR) - hireCal.get(Calendar.YEAR);
-
-            // Adjust if hire date hasn't occurred yet this year
             if (currentCal.get(Calendar.MONTH) < hireCal.get(Calendar.MONTH) ||
                     (currentCal.get(Calendar.MONTH) == hireCal.get(Calendar.MONTH) &&
                             currentCal.get(Calendar.DAY_OF_MONTH) < hireCal.get(Calendar.DAY_OF_MONTH))) {
                 years--;
             }
-
             return years;
         } catch (Exception e) {
             return 0;
@@ -157,7 +158,6 @@ public class SpecialLoanFragment extends Fragment {
             double loanAmount = Double.parseDouble(editLoanAmount.getText().toString().trim());
             int months = Integer.parseInt(editMonths.getText().toString().trim());
 
-            // Validate special loan limits
             if (loanAmount < 50000 || loanAmount > 100000) {
                 Toast.makeText(getContext(), "Special loan amount must be between ₱50,000 and ₱100,000", Toast.LENGTH_SHORT).show();
                 return;
@@ -168,22 +168,19 @@ public class SpecialLoanFragment extends Fragment {
                 return;
             }
 
-            // Calculate loan details (special loan rates)
             double interestRate = loanCalculator.getSpecialLoanInterestRate(months);
-            double serviceCharge = loanCalculator.calculateServiceCharge(loanAmount, "special");
-            double interest = loanCalculator.calculateInterest(loanAmount, interestRate, months);
-            double totalAmount = loanAmount + serviceCharge + interest;
-            double monthlyPayment = totalAmount / months;
-            double takeHomeAmount = loanAmount - serviceCharge;
+            double interest = loanAmount * interestRate * months;
 
-            // Update UI with results
-            tvServiceCharge.setText(String.format("Service Charge: ₱%,.2f", serviceCharge));
+            double totalAmount = loanAmount + interest;
+            double monthlyPayment = totalAmount / months;
+            double takeHomeAmount = loanAmount;
+
             tvInterest.setText(String.format("Total Interest: ₱%,.2f", interest));
             tvMonthlyPayment.setText(String.format("Monthly Payment: ₱%,.2f", monthlyPayment));
             tvTakeHomeAmount.setText(String.format("Take Home Amount: ₱%,.2f", takeHomeAmount));
 
-            // Enable apply button
             btnApply.setEnabled(true);
+            isCalculated = true;
 
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
@@ -191,56 +188,47 @@ public class SpecialLoanFragment extends Fragment {
     }
 
     private void applyForLoan() {
+        if (!isCalculated) {
+            Toast.makeText(getContext(), "Please calculate the loan first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
             double loanAmount = Double.parseDouble(editLoanAmount.getText().toString().trim());
             int months = Integer.parseInt(editMonths.getText().toString().trim());
 
-            // Validate again
-            if (loanAmount < 50000 || loanAmount > 100000) {
-                Toast.makeText(getContext(), "Special loan amount must be between ₱50,000 and ₱100,000", Toast.LENGTH_SHORT).show();
+            if (loanAmount < 50000 || loanAmount > 100000 || months < 1 || months > 18) {
+                Toast.makeText(getContext(), "Invalid loan amount or term", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (months < 1 || months > 18) {
-                Toast.makeText(getContext(), "Special loan term must be 1-18 months", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Check eligibility again
             int yearsOfService = calculateYearsOfService(dateHired);
             if (yearsOfService < 5) {
                 Toast.makeText(getContext(), "You are not eligible for special loan (5+ years required)", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Check if user already has pending special loan
             if (db.hasPendingLoan(userId, "special")) {
                 Toast.makeText(getContext(), "You already have a pending special loan application", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Get user's basic salary for loan calculations
+            double interestRate = loanCalculator.getSpecialLoanInterestRate(months);
+            double interest = loanAmount * interestRate * months;
+            double totalAmount = loanAmount + interest;
+            double monthlyPayment = totalAmount / months;
+            double takeHomeAmount = loanAmount;
             double basicSalary = db.getUserBasicSalary(userId);
 
-            // Calculate loan details
-            double interestRate = loanCalculator.getSpecialLoanInterestRate(months);
-            double serviceCharge = loanCalculator.calculateServiceCharge(loanAmount, "special");
-            double interest = loanCalculator.calculateInterest(loanAmount, interestRate, months);
-            double totalAmount = loanAmount + serviceCharge + interest;
-            double monthlyPayment = totalAmount / months;
-            double takeHomeAmount = loanAmount - serviceCharge;
-
-            // Get current date
             String applicationDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-            // Apply for loan
             boolean success = db.applyForLoan(
                     userId,
                     "special",
                     loanAmount,
                     months,
                     interestRate,
-                    serviceCharge,
+                    0, // service charge = 0
                     totalAmount,
                     monthlyPayment,
                     takeHomeAmount,
@@ -263,11 +251,11 @@ public class SpecialLoanFragment extends Fragment {
     private void clearForm() {
         editLoanAmount.setText("");
         editMonths.setText("");
-        tvServiceCharge.setText("Service Charge: ₱0.00");
         tvInterest.setText("Total Interest: ₱0.00");
         tvMonthlyPayment.setText("Monthly Payment: ₱0.00");
         tvTakeHomeAmount.setText("Take Home Amount: ₱0.00");
         btnApply.setEnabled(false);
+        isCalculated = false;
     }
 
     private void goBack() {

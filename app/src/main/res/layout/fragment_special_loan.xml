@@ -25,7 +25,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/arrowback"
-                android:tint="@color/white"
+                app:tint="@color/white"
                 android:onClick="onBackClick"/>
 
             <TextView
@@ -114,15 +114,6 @@
 
         <!-- Calculation Results -->
         <TextView
-            android:id="@+id/tvServiceCharge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Service Charge: ₱0.00"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
             android:id="@+id/tvInterest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -135,7 +126,7 @@
             android:id="@+id/tvTakeHomeAmount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Take Home Amount: ₱0.00"
+            android:text="Loan Amount: ₱0.00"
             android:textSize="16sp"
             android:textColor="@color/white"
             android:layout_marginBottom="8dp"/>

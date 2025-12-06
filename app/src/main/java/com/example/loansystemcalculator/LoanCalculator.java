@@ -31,8 +31,6 @@ public class LoanCalculator {
         switch (loanType.toLowerCase()) {
             case "emergency":
                 return loanAmount * SERVICE_CHARGE_EMERGENCY;
-            case "special":
-                return loanAmount * SERVICE_CHARGE_SPECIAL;
             case "regular":
                 return loanAmount * SERVICE_CHARGE_REGULAR;
             default:
@@ -57,31 +55,39 @@ public class LoanCalculator {
     }
 
     // Calculate take home amount (loan amount minus service charge)
-    public double calculateTakeHomeAmount(double loanAmount, double serviceCharge) {
-        return loanAmount - serviceCharge;
+    public double calculateTakeHomeAmount(double loanAmount, double interest, double serviceCharge) {
+        return loanAmount - (interest + serviceCharge);
     }
+
 
     // Get interest rate for special loan based on months
     public double getSpecialLoanInterestRate(int months) {
-        if (months <= 6) {
-            return 0.008; // 0.8% for 1-6 months
-        } else if (months <= 12) {
-            return 0.009; // 0.9% for 7-12 months
+        if (months >= 1 && months <= 6) {
+            return 0.0060; // 0.60%
+        } else if (months >= 7 && months <= 12) {
+            return 0.0062; // 0.62%
+        } else if (months >= 13 && months <= 18) {
+            return 0.0065; // 0.65%
         } else {
-            return 0.010; // 1.0% for 13-18 months
+            return 0; // invalid months
         }
     }
 
+
     // Get interest rate for regular loan based on months
     public double getRegularLoanInterestRate(int months) {
-        if (months <= 6) {
-            return 0.007; // 0.7% for 1-6 months
-        } else if (months <= 12) {
-            return 0.008; // 0.8% for 7-12 months
-        } else if (months <= 18) {
-            return 0.009; // 0.9% for 13-18 months
+        if (months >= 1 && months <= 5) {
+            return 0.0062; // 0.62%
+        } else if (months >= 6 && months <= 10) {
+            return 0.0065; // 0.65%
+        } else if (months >= 11 && months <= 15) {
+            return 0.0068; // 0.68%
+        } else if (months >= 16 && months <= 20) {
+            return 0.0075; // 0.75%
+        } else if (months >= 21 && months <= 24) {
+            return 0.0080; // 0.80%
         } else {
-            return 0.010; // 1.0% for 19-24 months
+            return 0; // invalid months
         }
     }
 

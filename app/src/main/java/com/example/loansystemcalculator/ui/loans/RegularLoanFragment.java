@@ -25,13 +25,15 @@ import java.util.Locale;
 
 public class RegularLoanFragment extends Fragment {
 
-    private EditText editLoanAmount, editMonths;
+    private EditText editMonths, editLoanAmount;
     private TextView tvBasicSalary, tvMaxLoan, tvServiceCharge, tvInterest, tvMonthlyPayment, tvTakeHomeAmount;
     private Button btnCalculate, btnApply;
     private DatabaseHelper db;
     private LoanCalculator loanCalculator;
-    private String userEmail;
+
     private int userId;
+    private String userEmail;
+
     private double basicSalary;
     private double maxLoanAmount;
 
@@ -40,6 +42,7 @@ public class RegularLoanFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_regular_loan, container, false);
 
         initializeViews(view);
@@ -52,23 +55,23 @@ public class RegularLoanFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        editLoanAmount = view.findViewById(R.id.edit_loanAmount);
         editMonths = view.findViewById(R.id.edit_loanMonth);
+
         tvBasicSalary = view.findViewById(R.id.tvBasicSalary);
         tvMaxLoan = view.findViewById(R.id.tvMaxLoan);
         tvServiceCharge = view.findViewById(R.id.tvServiceCharge);
         tvInterest = view.findViewById(R.id.tvInterest);
         tvMonthlyPayment = view.findViewById(R.id.tvMonthlyPayment);
         tvTakeHomeAmount = view.findViewById(R.id.tvTakeHomeAmount);
+
         btnCalculate = view.findViewById(R.id.btn_Calculate);
         btnApply = view.findViewById(R.id.btn_Apply);
 
         loanCalculator = new LoanCalculator();
 
-        // Setup back button
         ImageView btnBack = view.findViewById(R.id.btnBack);
         if (btnBack != null) {
-            btnBack.setOnClickListener(v -> goBack());
+            btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
         }
     }
 
@@ -77,21 +80,25 @@ public class RegularLoanFragment extends Fragment {
     }
 
     private void loadUserInfo() {
-        SharedPreferences prefs = getActivity().getSharedPreferences("user_session", 0);
+
+        SharedPreferences prefs = requireActivity().getSharedPreferences("userData", 0);
+
+        basicSalary = prefs.getFloat("basicSalary", 0f);
         userEmail = prefs.getString("email", "");
         userId = db.getUserIdByEmail(userEmail);
-        basicSalary = prefs.getFloat("basic_salary", 0);
+
+        if (basicSalary == 0) {
+            Toast.makeText(getContext(), "Basic salary not found. Please re-login.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void calculateMaxLoan() {
-        // Regular loan: Salary × 2.5
         maxLoanAmount = basicSalary * 2.5;
 
         tvBasicSalary.setText(String.format("Basic Salary: ₱%,.2f", basicSalary));
         tvMaxLoan.setText(String.format("Maximum Loan Amount: ₱%,.2f", maxLoanAmount));
 
-        // Set hint with max amount
-        editLoanAmount.setHint("Up to ₱" + String.format("%,.0f", maxLoanAmount));
+        editLoanAmount.setText(String.format("%,.2f", maxLoanAmount));
     }
 
     private void setupClickListeners() {
@@ -101,80 +108,55 @@ public class RegularLoanFragment extends Fragment {
 
     private void calculateLoan() {
         try {
-            double loanAmount = Double.parseDouble(editLoanAmount.getText().toString().trim());
             int months = Integer.parseInt(editMonths.getText().toString().trim());
-
-            // Validate regular loan limits
-            if (loanAmount <= 0 || loanAmount > maxLoanAmount) {
-                Toast.makeText(getContext(),
-                        String.format("Regular loan amount must be between ₱1 and ₱%,.2f", maxLoanAmount),
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
+            double loanAmount = maxLoanAmount;
 
             if (months < 1 || months > 24) {
-                Toast.makeText(getContext(), "Regular loan term must be 1-24 months", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Regular loan term must be 1–24 months", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Calculate loan details with variable rates
             double interestRate = loanCalculator.getRegularLoanInterestRate(months);
             double serviceCharge = loanCalculator.calculateServiceCharge(loanAmount, "regular");
             double interest = loanCalculator.calculateInterest(loanAmount, interestRate, months);
+
             double totalAmount = loanAmount + serviceCharge + interest;
             double monthlyPayment = totalAmount / months;
-            double takeHomeAmount = loanAmount - serviceCharge;
 
-            // Update UI with results
+            double takeHomeAmount = loanAmount - (interest + serviceCharge);
+
             tvServiceCharge.setText(String.format("Service Charge: ₱%,.2f", serviceCharge));
             tvInterest.setText(String.format("Total Interest: ₱%,.2f (%.1f%%)", interest, interestRate * 100));
-            tvMonthlyPayment.setText(String.format("Monthly Payment: ₱%,.2f", monthlyPayment));
             tvTakeHomeAmount.setText(String.format("Take Home Amount: ₱%,.2f", takeHomeAmount));
+            tvMonthlyPayment.setText(String.format("Monthly Payment: ₱%,.2f", monthlyPayment));
 
-            // Enable apply button
             btnApply.setEnabled(true);
 
-        } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Please enter valid months", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void applyForLoan() {
         try {
-            double loanAmount = Double.parseDouble(editLoanAmount.getText().toString().trim());
             int months = Integer.parseInt(editMonths.getText().toString().trim());
+            double loanAmount = maxLoanAmount;
 
-            // Validate again
-            if (loanAmount <= 0 || loanAmount > maxLoanAmount) {
-                Toast.makeText(getContext(),
-                        String.format("Regular loan amount must be between ₱1 and ₱%,.2f", maxLoanAmount),
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (months < 1 || months > 24) {
-                Toast.makeText(getContext(), "Regular loan term must be 1-24 months", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Check if user already has pending regular loan
             if (db.hasPendingLoan(userId, "regular")) {
-                Toast.makeText(getContext(), "You already have a pending regular loan application", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "You already have a pending regular loan.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Calculate loan details with variable rates
             double interestRate = loanCalculator.getRegularLoanInterestRate(months);
             double serviceCharge = loanCalculator.calculateServiceCharge(loanAmount, "regular");
             double interest = loanCalculator.calculateInterest(loanAmount, interestRate, months);
+
             double totalAmount = loanAmount + serviceCharge + interest;
             double monthlyPayment = totalAmount / months;
-            double takeHomeAmount = loanAmount - serviceCharge;
+            double takeHomeAmount = loanAmount - (interest + serviceCharge);
 
-            // Get current date
-            String applicationDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+            String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-            // Apply for loan
             boolean success = db.applyForLoan(
                     userId,
                     "regular",
@@ -186,34 +168,27 @@ public class RegularLoanFragment extends Fragment {
                     monthlyPayment,
                     takeHomeAmount,
                     basicSalary,
-                    applicationDate
+                    date
             );
 
             if (success) {
-                Toast.makeText(getContext(), "Regular loan application submitted successfully!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Regular loan application submitted!", Toast.LENGTH_SHORT).show();
                 clearForm();
             } else {
-                Toast.makeText(getContext(), "Failed to submit loan application. Please try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Loan submission failed.", Toast.LENGTH_SHORT).show();
             }
 
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             Toast.makeText(getContext(), "Please calculate the loan first", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void clearForm() {
-        editLoanAmount.setText("");
         editMonths.setText("");
         tvServiceCharge.setText("Service Charge: ₱0.00");
         tvInterest.setText("Total Interest: ₱0.00");
         tvMonthlyPayment.setText("Monthly Payment: ₱0.00");
         tvTakeHomeAmount.setText("Take Home Amount: ₱0.00");
         btnApply.setEnabled(false);
-    }
-
-    private void goBack() {
-        if (getActivity() != null) {
-            getActivity().onBackPressed();
-        }
     }
 }

@@ -25,7 +25,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/arrowback"
-                android:tint="@color/white"
+                app:tint="@color/white"
                 android:onClick="onBackClick"/>
 
             <TextView
@@ -58,25 +58,6 @@
             android:textColor="@color/white"
             android:layout_marginBottom="20dp"/>
 
-        <!-- Loan Amount Input -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Loan Amount"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:layout_marginBottom="5dp"/>
-
-        <EditText
-            android:id="@+id/edit_loanAmount"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/rounded_edittext"
-            android:hint="Enter loan amount"
-            android:inputType="numberDecimal"
-            android:padding="10dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/light_grey"/>
 
         <!-- Loan Term Input -->
         <TextView
