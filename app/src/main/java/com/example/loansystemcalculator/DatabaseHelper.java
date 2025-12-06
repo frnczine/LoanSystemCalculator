@@ -15,6 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_USER_ID = "user_id";
     private static final String COL_EMPLOYEE_ID = "employee_id";
     private static final String COL_FIRST_NAME = "first_name";
+    private static final String COL_MIDDLE_NAME = "middle_name";
     private static final String COL_LAST_NAME = "last_name";
     private static final String COL_EMAIL = "email";
     private static final String COL_PASSWORD = "password";
@@ -47,6 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 COL_EMPLOYEE_ID + " TEXT UNIQUE," +
                 COL_FIRST_NAME + " TEXT," +
+                COL_MIDDLE_NAME + " TEXT," +
                 COL_LAST_NAME + " TEXT," +
                 COL_EMAIL + " TEXT UNIQUE," +
                 COL_PASSWORD + " TEXT," +
@@ -124,12 +126,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Register new user
-    public long registerUser(String firstName, String lastName, String email, String password,
+    public long registerUser(String firstName, String middleName, String lastName, String email, String password,
                              String dateHired, String employeeId, double basicSalary) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COL_FIRST_NAME, firstName);
+        values.put(COL_MIDDLE_NAME, middleName);
         values.put(COL_LAST_NAME, lastName);
         values.put(COL_EMAIL, email);
         values.put(COL_PASSWORD, password);
@@ -196,6 +199,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             user.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(COL_USER_ID)));
             user.setEmployeeId(cursor.getString(cursor.getColumnIndexOrThrow(COL_EMPLOYEE_ID)));
             user.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow(COL_FIRST_NAME)));
+            user.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow(COL_MIDDLE_NAME)));
             user.setLastName(cursor.getString(cursor.getColumnIndexOrThrow(COL_LAST_NAME)));
             user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(COL_EMAIL)));
             user.setDateHired(cursor.getString(cursor.getColumnIndexOrThrow(COL_DATE_HIRED)));
@@ -223,7 +227,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Get user's first name
-    public String getUserFirstName(int userId) {
+    public String getUserFirstName(int userId) { //change into ID?
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT " + COL_FIRST_NAME + " FROM " + TABLE_USERS +
@@ -336,6 +340,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         private int userId;
         private String employeeId;
         private String firstName;
+        private String middleName;
         private String lastName;
         private String email;
         private String dateHired;
@@ -350,6 +355,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         public String getFirstName() { return firstName; }
         public void setFirstName(String firstName) { this.firstName = firstName; }
+        public String getMiddleName() { return middleName; }
+        public void setMiddleName(String firstName) { this.middleName = middleName; }
 
         public String getLastName() { return lastName; }
         public void setLastName(String lastName) { this.lastName = lastName; }
