@@ -4,16 +4,16 @@
     android:background="@drawable/bg"
     android:padding="24dp">
 
-    <!-- Logout icon -->
+    <!--Logout icon-->
     <ImageView
         android:id="@+id/btnLogout"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/logouticon"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:padding="1dp"
-        android:contentDescription="Logout" />
+        android:layout_alignParentTop="true" />
 
     <!--Title-->
     <TextView
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvAdminEmail"
         android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView

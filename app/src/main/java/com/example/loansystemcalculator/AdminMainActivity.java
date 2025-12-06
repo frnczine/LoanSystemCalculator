@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,7 +24,7 @@ public class AdminMainActivity extends AppCompatActivity implements AdminLoanAda
     private AdminLoanAdapter adapter;
     private ArrayList<AdminLoan> loanList;
     private DatabaseHelper db;
-    private Button btnLogout;
+    private ImageView btnLogout;
     private TextView tvAdminEmail;
     private Spinner spinnerFilter;
 
@@ -34,6 +34,8 @@ public class AdminMainActivity extends AppCompatActivity implements AdminLoanAda
         setContentView(R.layout.activity_admin_main);
 
         btnLogout = findViewById(R.id.btnLogout);
+        btnLogout.setOnClickListener(v -> logout());
+
         tvAdminEmail = findViewById(R.id.tvAdminEmail);
         recyclerLoans = findViewById(R.id.recyclerLoans);
         spinnerFilter = findViewById(R.id.spinnerFilter);
