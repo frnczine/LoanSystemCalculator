@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,6 +71,24 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                    // Update checked item in navigation drawer
+                    navigationView.setCheckedItem(R.id.nav_home);
+                } else {
+                    // Allow default back behavior (e.g., exit app)
+                    setEnabled(false);  // Disable this callback to let the system handle it
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
 
         // Update navigation header with user info
         updateNavHeader();
@@ -162,6 +181,7 @@ public class MainActivity extends AppCompatActivity
         finish();
     }
 
+/*
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -174,6 +194,8 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+   */
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

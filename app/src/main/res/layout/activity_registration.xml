@@ -22,10 +22,10 @@
             <ImageView
                 android:id="@+id/imageView2"
                 android:layout_width="121dp"
-                android:layout_height="111dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/lightlogo"
-                android:contentDescription="App Logo" />
+                android:layout_height="58dp"
+                android:layout_marginTop="1dp"
+                android:contentDescription="App Logo"
+                android:src="@drawable/lightlogo" />
 
             <TextView
                 android:id="@+id/textView1"
@@ -60,7 +60,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@color/white" />
 
             <!-- Employee ID Display -->
@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -86,7 +86,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Generating..."
+                    android:text=""
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:gravity="end" />
@@ -95,7 +95,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="1dp"
                 android:background="@color/white" />
 
             <!-- First Name -->
@@ -124,6 +124,38 @@
                     android:background="@drawable/rounded_edittext"
                     android:ems="10"
                     android:hint="Enter first name"
+                    android:inputType="textPersonName"
+                    android:padding="10dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/light_grey" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/txt_MiddleName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Middle Name"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/edit_middleName"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_edittext"
+                    android:ems="10"
+                    android:hint="Enter middle name"
                     android:inputType="textPersonName"
                     android:padding="10dp"
                     android:textColor="@color/white"
@@ -162,37 +194,81 @@
                     android:textColorHint="@color/light_grey" />
             </LinearLayout>
 
-            <!-- Date Hired -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="20dp"
-                android:gravity="center_vertical">
+                android:layout_marginTop="10dp">
 
-                <TextView
-                    android:id="@+id/textView5"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Date Hired:"
-                    android:textColor="@color/white"
-                    android:textSize="18sp" />
-
-                <EditText
-                    android:id="@+id/edit_DateHired"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:background="@drawable/rounded_edittext"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:hint="Select date"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/light_grey"
-                    android:textSize="15sp"
-                    android:padding="10dp" />
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/txt_BasicSalary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Basic Salary"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/edit_BasicSalary"
+                        android:layout_width="175dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/rounded_edittext"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_gravity="start"
+                        android:hint="Enter Basic Salary"
+                        android:minWidth="150dp"
+                        android:padding="10dp"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/light_grey"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <!-- Right Column: Date Hired -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingLeft="20dp"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Date Hired:"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/edit_DateHired"
+                        android:layout_width="164dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/rounded_edittext"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:hint="Select date"
+                        android:layout_gravity="start"
+                        android:minWidth="150dp"
+                        android:padding="10dp"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/light_grey"
+                        android:textSize="15sp" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Password -->
@@ -200,7 +276,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -227,7 +303,7 @@
                     android:textColorHint="@color/light_grey" />
             </LinearLayout>
 
-            <!-- Confirm Password (New field) -->
+            <!-- Confirm Password -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -264,8 +340,8 @@
                 android:id="@+id/btn_Register"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/rounded_button"
                 android:backgroundTint="@color/light_purple"
                 android:fontFamily="sans-serif-medium"
@@ -280,7 +356,7 @@
                 android:id="@+id/txt_login_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="5dp"
                 android:text="Already have an account? Login here"
                 android:textColor="@color/white"
                 android:textSize="14sp"

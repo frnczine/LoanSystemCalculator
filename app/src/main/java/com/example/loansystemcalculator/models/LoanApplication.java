@@ -1,5 +1,6 @@
 package com.example.loansystemcalculator.models;
 
+
 public class LoanApplication {
     private int id;
     private int userId;
