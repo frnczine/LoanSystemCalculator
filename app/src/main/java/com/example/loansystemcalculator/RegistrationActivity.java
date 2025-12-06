@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.loansystemcalculator.models.User;
 import com.example.loansystemcalculator.ui.home.HomeFragment;
 
 import java.text.SimpleDateFormat;
@@ -140,7 +139,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 year, month, day
         );
 
-        // Set max date to today (can't be hired in the future)
+        //(can't be hired in the future)
         datePicker.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePicker.show();
     }
@@ -156,7 +155,7 @@ public class RegistrationActivity extends AppCompatActivity {
         String employeeId = txtEmployeeId.getText().toString().trim();
 
         // Validation
-        if (firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || dateHired.isEmpty() || basicSalaryStr.isEmpty()) {
+        if (firstName.isEmpty() || middleName.isEmpty() || lastName.isEmpty()|| password.isEmpty() || dateHired.isEmpty() || basicSalaryStr.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -201,7 +200,7 @@ public class RegistrationActivity extends AppCompatActivity {
             editor.putString("user_type", "user");
             editor.putString("email", email);
             editor.putString("first_name", firstName);
-            editor.putString("middle_name", middleName); // Added middle name storage
+            editor.putString("middle_name", middleName);
             editor.putString("last_name", lastName);
             editor.putString("employee_id", employeeId);
             editor.putString("date_hired", dateHired);
