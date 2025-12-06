@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "loan_db";
     private static final int DB_VERSION = 2;
@@ -347,27 +350,126 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         private double basicSalary;
 
         // Getters and setters
-        public int getUserId() { return userId; }
-        public void setUserId(int userId) { this.userId = userId; }
+        public int getUserId() {
+            return userId;
+        }
 
-        public String getEmployeeId() { return employeeId; }
-        public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
 
-        public String getFirstName() { return firstName; }
-        public void setFirstName(String firstName) { this.firstName = firstName; }
-        public String getMiddleName() { return middleName; }
-        public void setMiddleName(String firstName) { this.middleName = middleName; }
+        public String getEmployeeId() {
+            return employeeId;
+        }
 
-        public String getLastName() { return lastName; }
-        public void setLastName(String lastName) { this.lastName = lastName; }
+        public void setEmployeeId(String employeeId) {
+            this.employeeId = employeeId;
+        }
 
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
+        public String getFirstName() {
+            return firstName;
+        }
 
-        public String getDateHired() { return dateHired; }
-        public void setDateHired(String dateHired) { this.dateHired = dateHired; }
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
 
-        public double getBasicSalary() { return basicSalary; }
-        public void setBasicSalary(double basicSalary) { this.basicSalary = basicSalary; }
+        public String getMiddleName() {
+            return middleName;
+        }
+
+        public void setMiddleName(String firstName) {
+            this.middleName = middleName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getDateHired() {
+            return dateHired;
+        }
+
+        public void setDateHired(String dateHired) {
+            this.dateHired = dateHired;
+        }
+
+        public double getBasicSalary() {
+            return basicSalary;
+        }
+
+        public void setBasicSalary(double basicSalary) {
+            this.basicSalary = basicSalary;
+        }
+    }
+
+    // ADMIN SIDE
+    public ArrayList<AdminLoan> getAllLoans(String filterStatus) {
+        ArrayList<AdminLoan> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query =
+                "SELECT l.loan_id, l.application_date, u.email AS client_email, " +
+                        "l.basic_salary, l.loan_type, l.loan_amount, l.status, u.date_hired " +
+                        "FROM loans l " +
+                        "JOIN users u ON l.user_id = u.user_id ";
+
+        if (!filterStatus.equalsIgnoreCase("All")) {
+            query += "WHERE l.status = '" + filterStatus + "' ";
+        }
+
+        query += "ORDER BY l.application_date DESC";
+
+        Cursor cursor = db.rawQuery(query, null);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        if (cursor.moveToFirst()) {
+            do {
+                AdminLoan loan = new AdminLoan();
+                loan.loanId = cursor.getInt(cursor.getColumnIndexOrThrow("loan_id"));
+                loan.applicationDate = cursor.getString(cursor.getColumnIndexOrThrow("application_date"));
+                loan.clientEmail = cursor.getString(cursor.getColumnIndexOrThrow("client_email"));
+                loan.basicSalary = cursor.getDouble(cursor.getColumnIndexOrThrow("basic_salary"));
+                loan.loanType = cursor.getString(cursor.getColumnIndexOrThrow("loan_type"));
+                loan.loanAmount = cursor.getDouble(cursor.getColumnIndexOrThrow("loan_amount"));
+                loan.status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+                loan.dateHired = cursor.getString(cursor.getColumnIndexOrThrow("date_hired"));
+
+                // Calculate years of service (termYears)
+                try {
+                    long hired = format.parse(loan.dateHired).getTime();
+                    long applied = format.parse(loan.applicationDate).getTime();
+                    double years = (applied - hired) / (1000.0 * 60 * 60 * 24 * 365);
+                    loan.termYears = Math.floor(years);
+                } catch (Exception e) {
+                    loan.termYears = 0;
+                }
+
+                list.add(loan);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public void updateLoanStatus(int loanId, String newStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("status", newStatus);
+        db.update("loans", values, "loan_id = ?", new String[]{String.valueOf(loanId)});
+        db.close();
     }
 }
