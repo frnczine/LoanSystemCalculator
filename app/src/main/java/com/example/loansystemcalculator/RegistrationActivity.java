@@ -154,8 +154,9 @@ public class RegistrationActivity extends AppCompatActivity {
         String basicSalaryStr = editBasicSalary.getText().toString().trim();
         String employeeId = txtEmployeeId.getText().toString().trim();
 
-        // Validation
-        if (firstName.isEmpty() || middleName.isEmpty() || lastName.isEmpty()|| password.isEmpty() || dateHired.isEmpty() || basicSalaryStr.isEmpty()) {
+        // Validate required fields
+        if (firstName.isEmpty() || middleName.isEmpty() || lastName.isEmpty() ||
+                password.isEmpty() || confirmPassword.isEmpty() || dateHired.isEmpty() || basicSalaryStr.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -178,7 +179,7 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
 
-        // Generate email from name (firstname.lastname@abc.com)
+        // Generate email from name
         String email = generateEmail(firstName, lastName);
 
         // Check if email already exists
@@ -191,38 +192,17 @@ public class RegistrationActivity extends AppCompatActivity {
         long result = db.registerUser(firstName, middleName, lastName, email, password, dateHired, employeeId, basicSalary);
 
         if (result != -1) {
-            // Auto login after successful registration
-            SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
+            Toast.makeText(this, "Registration successful! Please log in.", Toast.LENGTH_SHORT).show();
 
-            // Store ALL user information
-            editor.putBoolean("is_logged_in", true);
-            editor.putString("user_type", "user");
-            editor.putString("email", email);
-            editor.putString("first_name", firstName);
-            editor.putString("middle_name", middleName);
-            editor.putString("last_name", lastName);
-            editor.putString("employee_id", employeeId);
-            editor.putString("date_hired", dateHired);
-            editor.putFloat("basic_salary", (float) basicSalary);
-
-            // Store full name for display (include middle name if present)
-            String fullName = firstName + (middleName.isEmpty() ? "" : " " + middleName) + " " + lastName;
-            editor.putString("full_name", fullName);
-            editor.putString("display_name", firstName); // For "Hi, FirstName!"
-
-            editor.apply();
-
-            Toast.makeText(this, "Registration successful! Welcome, " + fullName, Toast.LENGTH_SHORT).show();
-
-            // Navigate to MainActivity (user home)
-            Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+            // Redirect to LoginActivity
+            Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish();
+            finish(); // close RegistrationActivity
         } else {
             Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private String generateEmail(String firstName, String lastName) {
 
