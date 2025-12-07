@@ -46,14 +46,14 @@ public class AdminLoanAdapter extends RecyclerView.Adapter<AdminLoanAdapter.View
         AdminLoan loan = list.get(position);
 
         // Set dynamic values with labels
-        holder.txtDateRequested.setText("Date Requested: " + loan.applicationDate);
-        holder.txtApplicationID.setText("Application ID: " + loan.loanId);
-        holder.txtEmail.setText("Email: " + loan.clientEmail);
-        holder.txtBasicSalary.setText("Basic Salary: ₱" + loan.basicSalary);
-        holder.txtTermYears.setText("Term: " + (int) loan.termYears + " years");
-        holder.txtLoanType.setText("Loan Type: " + loan.loanType);
-        holder.txtLoanAmount.setText("Loan Amount: ₱" + loan.loanAmount);
-        holder.txtStatus.setText("Status: " + loan.status);
+        holder.txtDateRequested.setText(loan.applicationDate);
+        holder.txtApplicationID.setText(loan.loanId);
+        holder.txtEmail.setText(loan.clientEmail);
+        holder.txtBasicSalary.setText("₱" + loan.basicSalary);
+        holder.txtTermYears.setText((int) loan.termYears + " years");
+        holder.txtLoanType.setText(loan.loanType);
+        holder.txtLoanAmount.setText("₱" + loan.loanAmount);
+        holder.txtStatus.setText(loan.status);
 
         // Show approve/reject buttons only if loan is pending
         if (loan.status.equalsIgnoreCase("Pending")) {
