@@ -1,5 +1,5 @@
 package com.example.loansystemcalculator.ui.loans;
-
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,9 +25,10 @@ import java.util.Locale;
 
 public class RegularLoanFragment extends Fragment {
 
-    private EditText editMonths, editLoanAmount;
+    private EditText editMonths;
     private TextView tvBasicSalary, tvMaxLoan, tvServiceCharge, tvInterest, tvMonthlyPayment, tvTakeHomeAmount;
     private Button btnCalculate, btnApply;
+
     private DatabaseHelper db;
     private LoanCalculator loanCalculator;
 
@@ -80,25 +81,28 @@ public class RegularLoanFragment extends Fragment {
     }
 
     private void loadUserInfo() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences("user_session", Context.MODE_PRIVATE);
 
-        SharedPreferences prefs = requireActivity().getSharedPreferences("userData", 0);
-
-        basicSalary = prefs.getFloat("basicSalary", 0f);
+        basicSalary = (double) prefs.getFloat("basic_salary", 0);
         userEmail = prefs.getString("email", "");
         userId = db.getUserIdByEmail(userEmail);
+
+        tvBasicSalary.setText(String.format("Basic Salary: ₱%,.2f", basicSalary));
 
         if (basicSalary == 0) {
             Toast.makeText(getContext(), "Basic salary not found. Please re-login.", Toast.LENGTH_LONG).show();
         }
     }
 
+
+
+
+
     private void calculateMaxLoan() {
-        maxLoanAmount = basicSalary * 2.5;
+        maxLoanAmount = loanCalculator.calculateMaxRegularLoan(basicSalary);
 
         tvBasicSalary.setText(String.format("Basic Salary: ₱%,.2f", basicSalary));
         tvMaxLoan.setText(String.format("Maximum Loan Amount: ₱%,.2f", maxLoanAmount));
-
-        editLoanAmount.setText(String.format("%,.2f", maxLoanAmount));
     }
 
     private void setupClickListeners() {
@@ -116,19 +120,28 @@ public class RegularLoanFragment extends Fragment {
                 return;
             }
 
+            // Interest rate
             double interestRate = loanCalculator.getRegularLoanInterestRate(months);
+
+            // Service charge (2%)
             double serviceCharge = loanCalculator.calculateServiceCharge(loanAmount, "regular");
+
+            // Total interest
             double interest = loanCalculator.calculateInterest(loanAmount, interestRate, months);
 
+            // Total amount payable
             double totalAmount = loanAmount + serviceCharge + interest;
+
+            // Monthly payment
             double monthlyPayment = totalAmount / months;
 
-            double takeHomeAmount = loanAmount - (interest + serviceCharge);
+            // Take-home ONLY deducts service charge
+            double takeHomeAmount = loanAmount - serviceCharge;
 
             tvServiceCharge.setText(String.format("Service Charge: ₱%,.2f", serviceCharge));
-            tvInterest.setText(String.format("Total Interest: ₱%,.2f (%.1f%%)", interest, interestRate * 100));
-            tvTakeHomeAmount.setText(String.format("Take Home Amount: ₱%,.2f", takeHomeAmount));
+            tvInterest.setText(String.format("Total Interest: ₱%,.2f (%.2f%%)", interest, interestRate * 100));
             tvMonthlyPayment.setText(String.format("Monthly Payment: ₱%,.2f", monthlyPayment));
+            tvTakeHomeAmount.setText(String.format("Take Home Amount: ₱%,.2f", takeHomeAmount));
 
             btnApply.setEnabled(true);
 
@@ -153,7 +166,9 @@ public class RegularLoanFragment extends Fragment {
 
             double totalAmount = loanAmount + serviceCharge + interest;
             double monthlyPayment = totalAmount / months;
-            double takeHomeAmount = loanAmount - (interest + serviceCharge);
+
+            // Correct take-home (interest NOT deducted)
+            double takeHomeAmount = loanAmount - serviceCharge;
 
             String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 

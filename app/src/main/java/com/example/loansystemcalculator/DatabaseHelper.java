@@ -187,7 +187,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
-    // Get user details by ID (returns User object)
+    // Get user details by ID (returns User object) (INIBA NI ANA)
+
+    public String getUserLastName(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT last_name FROM users WHERE user_id = ?",
+                new String[]{String.valueOf(userId)}
+        );
+
+        String lastName = "";
+        if (cursor.moveToFirst()) {
+            lastName = cursor.getString(0);
+        }
+        cursor.close();
+        return lastName;
+    }
+
     public User getUserDetails(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(
@@ -202,7 +218,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             user.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(COL_USER_ID)));
             user.setEmployeeId(cursor.getString(cursor.getColumnIndexOrThrow(COL_EMPLOYEE_ID)));
             user.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow(COL_FIRST_NAME)));
-            user.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow(COL_MIDDLE_NAME)));
+            user.setMiddleName(cursor.getString(cursor.getColumnIndexOrThrow(COL_MIDDLE_NAME)));
             user.setLastName(cursor.getString(cursor.getColumnIndexOrThrow(COL_LAST_NAME)));
             user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(COL_EMAIL)));
             user.setDateHired(cursor.getString(cursor.getColumnIndexOrThrow(COL_DATE_HIRED)));
@@ -211,6 +227,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return user;
     }
+
 
     // Get user's basic salary
     public double getUserBasicSalary(int userId) {
@@ -221,12 +238,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(userId)}
         );
 
-        double salary = 0;
+        double basic_salary = 0;
         if (cursor.moveToFirst()) {
-            salary = cursor.getDouble(0);
+            basic_salary = cursor.getDouble(0);
         }
         cursor.close();
-        return salary;
+        return basic_salary;
     }
 
     // Get user's first name

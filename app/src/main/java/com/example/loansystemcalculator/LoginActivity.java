@@ -67,10 +67,24 @@ public class LoginActivity extends AppCompatActivity {
                 // Check regular user login
                 boolean isValid = db.checkUserLogin(email, password);
                 if (isValid) {
+                    // GET USER ID
+                    int userId = db.getUserIdByEmail(email);
+
+                    // GET FIRST & LAST NAME
+                    String firstName = db.getUserFirstName(userId);
+
+                    // You must create this method in DB (missing!)
+                    String lastName = db.getUserLastName(userId);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("is_logged_in", true);
                     editor.putString("user_type", "user");
                     editor.putString("email", email);
+
+
+                    // SAVE USER NAME
+                    editor.putString("first_name", firstName);
+                    editor.putString("last_name", lastName);
+                    editor.putFloat("basic_salary", (float) db.getUserBasicSalary(userId));
                     editor.apply();
 
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
