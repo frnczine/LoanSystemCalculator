@@ -13,6 +13,8 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+
+
         <!-- Loan Type and Status -->
         <LinearLayout
             android:layout_width="match_parent"
