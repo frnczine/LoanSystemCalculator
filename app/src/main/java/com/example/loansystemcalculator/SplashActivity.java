@@ -16,7 +16,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.splash);
 
         new Handler().postDelayed(() -> {
-            // Check if user is already logged in
+
             SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
             if (prefs.getBoolean("is_logged_in", false)) {
                 String userType = prefs.getString("user_type", "");
@@ -26,7 +26,7 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 }
             } else {
-                // Not logged in, go to login
+
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             }
             finish();

@@ -34,7 +34,6 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        // Initialize views
         editFirstName = findViewById(R.id.edit_firstName);
         editMiddleName = findViewById(R.id.edit_middleName);
         editLastName = findViewById(R.id.edit_lastName);
@@ -45,10 +44,9 @@ public class RegistrationActivity extends AppCompatActivity {
         txtEmployeeId = findViewById(R.id.txt_empID);
         btnRegister = findViewById(R.id.btn_Register);
 
-        // Initialize database helper
         db = new DatabaseHelper(this);
 
-        // Add TextWatchers for real-time EmpID generation (including middle name)
+        //real-time (empID generator)
         editFirstName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -154,7 +152,7 @@ public class RegistrationActivity extends AppCompatActivity {
         String basicSalaryStr = editBasicSalary.getText().toString().trim();
         String employeeId = txtEmployeeId.getText().toString().trim();
 
-        // Validate required fields
+        // Validation
         if (firstName.isEmpty() || middleName.isEmpty() || lastName.isEmpty() ||
                 password.isEmpty() || confirmPassword.isEmpty() || dateHired.isEmpty() || basicSalaryStr.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
@@ -179,7 +177,7 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
 
-        // Generate email from name
+        // Generate email from name fName.lName@abc.com
         String email = generateEmail(firstName, lastName);
 
         // Check if email already exists
@@ -197,7 +195,7 @@ public class RegistrationActivity extends AppCompatActivity {
             // Redirect to LoginActivity
             Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // close RegistrationActivity
+            finish();
         } else {
             Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
         }

@@ -52,14 +52,11 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        // Set up toolbar
         Toolbar toolbar = binding.appBarMain.toolbar;
         setSupportActionBar(toolbar);
 
-        // Hide the default floating action button
         binding.appBarMain.fab.setVisibility(View.GONE);
 
-        // Set up drawer navigation
         drawer = binding.drawerLayout;
         navigationView = binding.navView;
 
@@ -83,17 +80,15 @@ public class MainActivity extends AppCompatActivity
                     navigationView.setCheckedItem(R.id.nav_home);
                 } else {
                     // Allow default back behavior (e.g., exit app)
-                    setEnabled(false);  // Disable this callback to let the system handle it
+                    setEnabled(false);
                     getOnBackPressedDispatcher().onBackPressed();
                 }
             }
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
 
-        // Update navigation header with user info
         updateNavHeader();
 
-        // Load home fragment by default
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment(), "Home");
             navigationView.setCheckedItem(R.id.nav_home);
@@ -199,7 +194,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -208,10 +203,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        // Only handle settings in toolbar menu
         if (id == R.id.action_settings) {
-            // Handle settings - you can implement this later
-            // For now, just show a message or open settings fragment
+
             return true;
         }
 

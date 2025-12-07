@@ -29,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
 
         db = new DatabaseHelper(this);
 
-        // Check if admin exists, if not create it
         db.createAdminIfNotExists();
 
         // Check if user is already logged in
@@ -64,22 +63,19 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, AdminMainActivity.class));
                 finish();
             } else {
-                // Check regular user login
+                // Check  user login
                 boolean isValid = db.checkUserLogin(email, password);
                 if (isValid) {
-                    // GET USER ID
+
                     int userId = db.getUserIdByEmail(email);
 
-                    // GET FIRST & LAST NAME
                     String firstName = db.getUserFirstName(userId);
 
-                    // You must create this method in DB (missing!)
                     String lastName = db.getUserLastName(userId);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("is_logged_in", true);
                     editor.putString("user_type", "user");
                     editor.putString("email", email);
-
 
                     // SAVE USER NAME
                     editor.putString("first_name", firstName);

@@ -177,7 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userId;
     }
 
-    // Get user by email (returns cursor)
+    // Get user by email
     public Cursor getUserByEmail(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery(
@@ -355,7 +355,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super.close();
     }
 
-    // User model class (inner class for convenience)
     public static class User {
         private int userId;
         private String employeeId;
