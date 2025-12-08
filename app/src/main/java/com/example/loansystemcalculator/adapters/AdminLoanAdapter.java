@@ -45,17 +45,15 @@ public class AdminLoanAdapter extends RecyclerView.Adapter<AdminLoanAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AdminLoan loan = list.get(position);
 
-        // Set dynamic values with labels
-        holder.txtDateRequested.setText(loan.applicationDate);
-        holder.txtApplicationID.setText(loan.loanId);
-        holder.txtEmail.setText(loan.clientEmail);
+        holder.txtDateRequested.setText(String.valueOf(loan.applicationDate));
+        holder.txtApplicationID.setText(String.valueOf(loan.loanId));
+        holder.txtEmail.setText(String.valueOf(loan.clientEmail));
         holder.txtBasicSalary.setText("₱" + loan.basicSalary);
-        holder.txtTermYears.setText((int) loan.termYears + " years");
-        holder.txtLoanType.setText(loan.loanType);
+        holder.txtTermYears.setText(loan.termYears + " years");
+        holder.txtLoanType.setText(String.valueOf(loan.loanType));
         holder.txtLoanAmount.setText("₱" + loan.loanAmount);
-        holder.txtStatus.setText(loan.status);
+        holder.txtStatus.setText(String.valueOf(loan.status));
 
-        // Show approve/reject buttons only if loan is pending
         if (loan.status.equalsIgnoreCase("Pending")) {
             holder.layoutActions.setVisibility(View.VISIBLE);
 
@@ -106,3 +104,4 @@ public class AdminLoanAdapter extends RecyclerView.Adapter<AdminLoanAdapter.View
         }
     }
 }
+
