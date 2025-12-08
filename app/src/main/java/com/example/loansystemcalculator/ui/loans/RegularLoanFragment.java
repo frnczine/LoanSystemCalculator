@@ -131,13 +131,10 @@ public class RegularLoanFragment extends Fragment {
 
             // Total amount payable
             double totalAmount = loanAmount + serviceCharge + interest;
-
-            // Monthly payment
-            double monthlyPayment = totalAmount / months;
-
             // Take-home ONLY deducts service charge
-            double takeHomeAmount = loanAmount - serviceCharge;
-
+            double takeHomeAmount = loanAmount - (interest + serviceCharge);
+            // Monthly payment
+            double monthlyPayment = takeHomeAmount / months;
             tvServiceCharge.setText(String.format("Service Charge: ₱%,.2f", serviceCharge));
             tvInterest.setText(String.format("Total Interest: ₱%,.2f (%.2f%%)", interest, interestRate * 100));
             tvMonthlyPayment.setText(String.format("Monthly Payment: ₱%,.2f", monthlyPayment));

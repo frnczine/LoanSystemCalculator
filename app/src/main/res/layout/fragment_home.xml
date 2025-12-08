@@ -71,7 +71,7 @@
                     android:id="@+id/mainIcon1"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
-                    android:src="@drawable/loanhand" />
+                    android:src="@drawable/emergencyicon" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -132,7 +132,7 @@
                     android:id="@+id/mainIcon2"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
-                    android:src="@drawable/loanhand" />
+                    android:src="@drawable/specialicon" />
 
                 <LinearLayout
                     android:layout_width="0dp"
