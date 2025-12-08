@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-12-06T07:32:54.099672500Z">
+        <DropdownSelection timestamp="2025-12-07T03:21:33.699191500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=8768bcd4" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Admin\.android\avd\Huawei_Mate_20_Pro.avd" />
             </handle>
           </Target>
         </DropdownSelection>
