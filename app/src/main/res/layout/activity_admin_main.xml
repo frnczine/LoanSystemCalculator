@@ -47,7 +47,17 @@
         android:layout_marginTop="10dp"
         android:layout_below="@id/text"
         android:background="@color/white" />
-
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Loan Status: "
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/text"
+        android:layout_marginTop="15dp"/>
     <!-- Filter Spinner -->
     <Spinner
         android:id="@+id/spinnerFilter"

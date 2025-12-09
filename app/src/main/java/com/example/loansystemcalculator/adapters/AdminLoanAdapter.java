@@ -47,6 +47,8 @@ public class AdminLoanAdapter extends RecyclerView.Adapter<AdminLoanAdapter.View
 
         holder.txtDateRequested.setText(String.valueOf(loan.applicationDate));
         holder.txtApplicationID.setText(String.valueOf(loan.loanId));
+        holder.txtUserID.setText(String.valueOf(loan.userID));
+        holder.txtFullName.setText(loan.fullName);
         holder.txtEmail.setText(String.valueOf(loan.clientEmail));
         holder.txtBasicSalary.setText("₱" + loan.basicSalary);
         holder.txtTermYears.setText(loan.termYears + " years");
@@ -83,8 +85,8 @@ public class AdminLoanAdapter extends RecyclerView.Adapter<AdminLoanAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtDateRequested, txtApplicationID, txtEmail, txtBasicSalary,
-                txtTermYears, txtLoanType, txtLoanAmount, txtStatus;
+        TextView txtDateRequested, txtApplicationID, txtUserID, txtFullName, txtEmail, txtBasicSalary, txtTermYears, txtLoanType, txtLoanAmount, txtStatus;
+
         LinearLayout layoutActions;
         Button btnApprove, btnReject;
 
@@ -92,6 +94,8 @@ public class AdminLoanAdapter extends RecyclerView.Adapter<AdminLoanAdapter.View
             super(itemView);
             txtDateRequested = itemView.findViewById(R.id.txtDateRequested);
             txtApplicationID = itemView.findViewById(R.id.txtApplicationID);
+            txtUserID = itemView.findViewById(R.id.txtUserID);
+            txtFullName = itemView.findViewById(R.id.txtFullName);
             txtEmail = itemView.findViewById(R.id.txtEmail);
             txtBasicSalary = itemView.findViewById(R.id.txtBasicSalary);
             txtTermYears = itemView.findViewById(R.id.txtTermYears);
