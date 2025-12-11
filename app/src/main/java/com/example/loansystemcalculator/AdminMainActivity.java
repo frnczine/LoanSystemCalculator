@@ -25,7 +25,6 @@ public class AdminMainActivity extends AppCompatActivity implements AdminLoanAda
     private ArrayList<AdminLoan> loanList;
     private DatabaseHelper db;
     private ImageView btnLogout;
-    private TextView tvAdminEmail;
     private Spinner spinnerFilter;
 
     @Override

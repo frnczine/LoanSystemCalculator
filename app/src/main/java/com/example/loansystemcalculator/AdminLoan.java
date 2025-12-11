@@ -3,7 +3,7 @@ package com.example.loansystemcalculator;
 public class AdminLoan {
     public int loanId;
     public String applicationDate;
-    public int userID;
+    public String employeeId;
     public String fullName;
     public String clientEmail;
     public String dateHired;

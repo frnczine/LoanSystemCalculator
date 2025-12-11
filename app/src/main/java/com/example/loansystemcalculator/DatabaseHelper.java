@@ -438,7 +438,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String query =
                 "SELECT l.loan_id, l.user_id, l.application_date, " + "u.first_name || ' ' || u.middle_name || ' ' " +
-                        "|| u.last_name AS full_name, " + "u.email AS client_email, " +
+                        "|| u.last_name AS full_name, " + "u.email AS client_email, u.employee_id," +
                         "l.basic_salary, l.loan_type, l.loan_amount, l.status, u.date_hired " +
                         "FROM loans l " +
                         "JOIN users u ON l.user_id = u.user_id ";
@@ -457,7 +457,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 AdminLoan loan = new AdminLoan();
                 loan.loanId = cursor.getInt(cursor.getColumnIndexOrThrow("loan_id"));
                 loan.applicationDate = cursor.getString(cursor.getColumnIndexOrThrow("application_date"));
-                loan.userID = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
+                loan.employeeId = cursor.getString(cursor.getColumnIndexOrThrow("employee_id"));
                 loan.fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
                 loan.clientEmail = cursor.getString(cursor.getColumnIndexOrThrow("client_email"));
                 loan.basicSalary = cursor.getDouble(cursor.getColumnIndexOrThrow("basic_salary"));
